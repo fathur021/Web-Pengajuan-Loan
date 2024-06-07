@@ -16,90 +16,56 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"/>
 
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-
-      .b-example-divider {
-        width: 100%;
-        height: 3rem;
-        background-color: rgba(0, 0, 0, 0.1);
-        border: solid rgba(0, 0, 0, 0.15);
-        border-width: 1px 0;
-        box-shadow: inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1),
-          inset 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
-      }
-
-      .b-example-vr {
-        flex-shrink: 0;
-        width: 1.5rem;
-        height: 100vh;
-      }
-
-      .bi {
-        vertical-align: -0.125em;
-        fill: currentColor;
-      }
-
-      .nav-scroller {
-        position: relative;
-        z-index: 2;
-        height: 2.75rem;
-        overflow-y: hidden;
-      }
-
-      .nav-scroller .nav {
-        display: flex;
-        flex-wrap: nowrap;
-        padding-bottom: 1rem;
-        margin-top: -1px;
-        overflow-x: auto;
-        text-align: center;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .btn-bd-primary {
-        --bd-violet-bg: #712cf9;
-        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-
-        --bs-btn-font-weight: 600;
-        --bs-btn-color: var(--bs-white);
-        --bs-btn-bg: var(--bd-violet-bg);
-        --bs-btn-border-color: var(--bd-violet-bg);
-        --bs-btn-hover-color: var(--bs-white);
-        --bs-btn-hover-bg: #6528e0;
-        --bs-btn-hover-border-color: #6528e0;
-        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-        --bs-btn-active-color: var(--bs-btn-hover-color);
-        --bs-btn-active-bg: #5a23c8;
-        --bs-btn-active-border-color: #5a23c8;
-      }
-
-      .bd-mode-toggle {
-        z-index: 1500;
-      }
-
-      .bd-mode-toggle .dropdown-menu .active .bi {
-        display: block !important;
-      }
-    </style>
 
     <!-- Custom styles for this template -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css"rel="stylesheet"/>
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static',filename='css/dashboard.css') }}"rel="stylesheet"/>
+
+    <script>
+      function predict_loan_status(user_id, loan_amount, prediction_index) {
+        const row = document.getElementById(`user-${user_id}-${loan_amount}-${prediction_index}`);
+    const data = {
+        user_id: parseInt(user_id),
+        LoanAmount: parseInt(row.querySelector('.LoanAmount').innerText) || 0,
+        Gender: row.querySelector('.Gender').innerText || 'Unknown',
+        Married: row.querySelector('.Married').innerText || 'Unknown',
+        Dependents: parseInt(row.querySelector('.Dependents').innerText) || 0,
+        Education: row.querySelector('.Education').innerText || 'Unknown',
+        Self_Employed: row.querySelector('.Self_Employed').innerText || 'Unknown',
+        ApplicantIncome: parseInt(row.querySelector('.ApplicantIncome').innerText) || 0,
+        CoapplicantIncome: parseInt(row.querySelector('.CoapplicantIncome').innerText) || 0,
+        Loan_Amount_Term: parseInt(row.querySelector('.Loan_Amount_Term').innerText) || 0,
+        Credit_History: parseInt(row.querySelector('.Credit_History').innerText) || 0,
+        Property_Area: row.querySelector('.Property_Area').innerText || 'Unknown'
+    };
+        console.log('Sending data:', data); // Debugging log
+        
+        fetch('/predict_loan_status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            const loanStatusRow = row.querySelector('.loan-status-row');
+            const loanStatusDiv = document.createElement('div');
+            loanStatusDiv.classList.add('loan-status');
+            if (result.prediction === 0) {
+                loanStatusDiv.innerText = "Ditolak";
+            } else if (result.prediction === 1) {
+                loanStatusDiv.innerText = "Diterima";
+            }
+            loanStatusRow.appendChild(loanStatusDiv);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    
+  </script>
   </head>
   <body>
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
@@ -251,58 +217,68 @@
     <div class="container-fluid">
         <div class="row">
           <!-- Main Content -->
+          {% block content %}
           <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <h2>WELCOME !</h2>
             <div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-              <div class="table-responsive small">
-                <table class="table table-striped table-sm">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Header</th>
-                      <th scope="col">Header</th>
-                      <th scope="col">Header</th>
-                      <th scope="col">Header</th>
-                      <th scope="col">Header</th>
-                      <th scope="col">Header</th>
-                      <th scope="col">Header</th>
-                      <th scope="col">Approve</th>
-                      <th scope="col">Not Approve</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>1,001</td>
-                      <td>random</td>
-                      <td>data</td>
-                      <td>placeholder</td>
-                      <td>text</td>
-                      <td>1,001</td>
-                      <td>random</td>
-                      <td>data</td>
-                      <td>placeholder</td>
-                      <td>text</td>
-                    </tr>
-                    <tr>
-                      <td>1,002</td>
-                      <td>placeholder</td>
-                      <td>irrelevant</td>
-                      <td>visual</td>
-                      <td>layout</td>
-                      <td>1,001</td>
-                      <td>random</td>
-                      <td>data</td>
-                      <td>placeholder</td>
-                      <td>text</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
             </div>
+            
+            <div class="container mt-5">
+              <h2 class="mb-4">User Data</h2>
+              {% if user_data %}
+              <div class="table-responsive">
+                  <table class="table table-striped table-hover table-bordered">
+                      <thead class="thead-dark">
+                          <tr>
+                              <th>ID</th>
+                              <th>Name</th>
+                              <th>Gender</th>
+                              <th>Married</th>
+                              <th>Dependents</th>
+                              <th>Education</th>
+                              <th>Self Employed</th>
+                              <th>Applicant Income</th>
+                              <th>Coapplicant Income</th>
+                              <th>Loan Amount</th>
+                              <th>Loan Amount Term</th>
+                              <th>Credit History</th>
+                              <th>Property Area</th>
+                              <th>Loan Status</th>
+                              <th>Action</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for user in user_data %}
+                          {% set prediction_index = loop.index0 %}
+                          <tr id="user-{{ user.user_id }}-{{ user.LoanAmount }}-{{ prediction_index }}">
+                              <td>{{ user.user_id }}</td>
+                              <td>{{ user.Name }}</td>
+                              <td class="Gender">{{ user.Gender }}</td>
+                              <td class="Married">{{ user.Married }}</td>
+                              <td class="Dependents">{{ user.Dependents }}</td>
+                              <td class="Education">{{ user.Education }}</td>
+                              <td class="Self_Employed">{{ user.Self_Employed }}</td>
+                              <td class="ApplicantIncome">{{ user.ApplicantIncome }}</td>
+                              <td class="CoapplicantIncome">{{ user.CoapplicantIncome }}</td>
+                              <td class="LoanAmount">{{ user.LoanAmount }}</td>
+                              <td class="Loan_Amount_Term">{{ user.Loan_Amount_Term }}</td>
+                              <td class="Credit_History">{{ user.Credit_History }}</td>
+                              <td class="Property_Area">{{ user.Property_Area }}</td>
+                              <td class="loan-status-row"></td>
+                              <td><button type="button" class="btn btn-primary" onclick="predict_loan_status('{{ user.user_id }}', '{{ user.LoanAmount }}', '{{ prediction_index }}')">Predict</button></td>
+                          </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+              </div>
+              {% else %}
+              <p>No user data available.</p>
+              {% endif %}
+          </div>
           </main>
-      
+          {% endblock %}
           <!-- Sidebar -->
-          <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
+          <div class="sidebar border border-right col-md-2 col-lg-1-5 p-0 bg-body-tertiary">
             <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
               <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="sidebarMenuLabel">Website Loan</h5>
@@ -311,19 +287,13 @@
               <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
                 <ul class="nav flex-column">
                   <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
+                    <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="{{ url_for('dashboard_admin') }}">
                       <svg class="bi"><use xlink:href="#house-fill" /></svg>
                       Dashboard
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2" href="#">
-                      <svg class="bi"><use xlink:href="#file-earmark" /></svg>
-                      Form Application
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center gap-2" href="#">
+                    <a class="nav-link d-flex align-items-center gap-2" href="{{ url_for('admin_complete_loan_page') }}">
                       <svg class="bi"><use xlink:href="#people" /></svg>
                       Customers
                     </a>
@@ -341,7 +311,7 @@
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link d-flex align-items-center gap-2" href="{{ url_for('login') }}">
+                      <a class="nav-link d-flex align-items-center gap-2" href="{{ url_for('logout') }}">
                         <svg class="bi"><use xlink:href="#door-closed" /></svg>
                         Sign out
                       </a>
@@ -351,9 +321,8 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      
+          
+          
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

@@ -1,0 +1,96 @@
+{% extends "dashboard_user.html" %} {% block content %}
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+  <!-- <h2>WELCOME !</h2> -->
+  <div
+    class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+  ></div>
+  <div class="container mt-5">
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %} {% if loan_data %}
+    <h1>Loan History</h1>
+    <h2>Active Loans</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Gender</th>
+          <th>Married</th>
+          <th>Dependents</th>
+          <th>Education</th>
+          <th>Self Employed</th>
+          <th>Applicant Income</th>
+          <th>Coapplicant Income</th>
+          <th>Loan Amount</th>
+          <th>Loan Amount Term</th>
+          <th>Credit History</th>
+          <th>Property Area</th>
+          <th>Loan Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loan in loan_data if loan.status == 'active' %}
+        <tr>
+          <td>{{ loan.Gender }}</td>
+          <td>{{ loan.Married }}</td>
+          <td>{{ loan.Dependents }}</td>
+          <td>{{ loan.Education }}</td>
+          <td>{{ loan.Self_Employed }}</td>
+          <td>{{ loan.ApplicantIncome }}</td>
+          <td>{{ loan.CoapplicantIncome }}</td>
+          <td>{{ loan.LoanAmount }}</td>
+          <td>{{ loan.Loan_Amount_Term }}</td>
+          <td>{{ loan.Credit_History }}</td>
+          <td>{{ loan.Property_Area }}</td>
+          <td>
+            {{ 'Ditolak' if loan.loan_status | int == 0 else 'Diterima' }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <br />
+    <h2>Completed Loans</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Gender</th>
+          <th>Married</th>
+          <th>Dependents</th>
+          <th>Education</th>
+          <th>Self Employed</th>
+          <th>Applicant Income</th>
+          <th>Coapplicant Income</th>
+          <th>Loan Amount</th>
+          <th>Loan Amount Term</th>
+          <th>Credit History</th>
+          <th>Property Area</th>
+          <th>Loan Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loan in loan_data if loan.status == 'completed' %}
+        <tr>
+          <td>{{ loan.Gender }}</td>
+          <td>{{ loan.Married }}</td>
+          <td>{{ loan.Dependents }}</td>
+          <td>{{ loan.Education }}</td>
+          <td>{{ loan.Self_Employed }}</td>
+          <td>{{ loan.ApplicantIncome }}</td>
+          <td>{{ loan.CoapplicantIncome }}</td>
+          <td>{{ loan.LoanAmount }}</td>
+          <td>{{ loan.Loan_Amount_Term }}</td>
+          <td>{{ loan.Credit_History }}</td>
+          <td>{{ loan.Property_Area }}</td>
+          <td>{{ 'Diterima' if loan.loan_status == 1 else 'Ditolak' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">No loan history found.</div>
+    {% endif %}
+  </div>
+</main>
+
+{% endblock %}

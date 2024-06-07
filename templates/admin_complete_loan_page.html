@@ -1,0 +1,61 @@
+{% extends "dashboard_admin.html" %} {% block content %}
+<!-- Main Content -->
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+  <h2>WELCOME !</h2>
+  <div
+    class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+  ></div>
+  <div class="container">
+    <h2 class="mt-4">Selesaikan Pinjaman oleh Admin</h2>
+    <table class="table table-striped mt-3">
+      <thead class="thead-dark">
+        <tr>
+          <th>Nama</th>
+          <th>Gender</th>
+          <th>Married</th>
+          <th>Dependents</th>
+          <th>Education</th>
+          <th>Self Employed</th>
+          <th>Applicant Income</th>
+          <th>Coapplicant Income</th>
+          <th>Loan Amount</th>
+          <th>Loan Amount Term</th>
+          <th>Credit History</th>
+          <th>Property Area</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loan in loan_data %}
+        <tr>
+          <td>{{ loan.name }}</td>
+          <td>{{ loan.Gender }}</td>
+          <td>{{ loan.Married }}</td>
+          <td>{{ loan.Dependents }}</td>
+          <td>{{ loan.Education }}</td>
+          <td>{{ loan.Self_Employed }}</td>
+          <td>{{ loan.ApplicantIncome }}</td>
+          <td>{{ loan.CoapplicantIncome }}</td>
+          <td>{{ loan.LoanAmount }}</td>
+          <td>{{ loan.Loan_Amount_Term }}</td>
+          <td>{{ loan.Credit_History }}</td>
+          <td>{{ loan.Property_Area }}</td>
+          <td>
+            <form
+              action="{{ url_for('complete_loan', user_id=loan.user_id) }}"
+              method="POST"
+            >
+              <button type="submit" class="btn btn-success">Selesai</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="{{ url_for('index') }}" class="btn btn-primary mt-3"
+      >Kembali ke Dashboard</a
+    >
+  </div>
+</main>
+
+{% endblock %}

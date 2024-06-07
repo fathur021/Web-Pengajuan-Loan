@@ -41,3 +41,15 @@
     },
   });
 })();
+
+// Menghilangkan pesan flashed setelah 5 detik
+setTimeout(function () {
+  var flashMessage = document.getElementById("flash-message");
+  if (flashMessage) {
+    flashMessage.remove();
+  }
+}, 3000); // 3 detik
+
+function removeFlashMessage(element) {
+  element.parentNode.remove(); // Menghapus elemen pesan saat tombol "X" ditekan
+}
