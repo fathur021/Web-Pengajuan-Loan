@@ -1,9 +1,8 @@
 {% extends "dashboard_user.html" %} {% block content %}
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
   <!-- <h2>WELCOME !</h2> -->
-  <div
-    class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-  ></div>
+  <div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  </div>
   <div class="container mt-5">
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
     messages %} {% for category, message in messages %}
@@ -31,6 +30,7 @@
       <tbody>
         {% for loan in loan_data if loan.status == 'active' %}
         <tr>
+
           <td>{{ loan.Gender }}</td>
           <td>{{ loan.Married }}</td>
           <td>{{ loan.Dependents }}</td>
@@ -43,7 +43,13 @@
           <td>{{ loan.Credit_History }}</td>
           <td>{{ loan.Property_Area }}</td>
           <td>
-            {{ 'Ditolak' if loan.loan_status | int == 0 else 'Diterima' }}
+            {% if loan.loan_status == '0' %}
+            <span class="label-danger">Ditolak</span>
+            {% elif loan.loan_status == '1' %}
+            <span class="label-success">Diterima</span>
+            {% else %}
+            <span class="label-warning">Pending</span>
+            {% endif %}
           </td>
         </tr>
         {% endfor %}
@@ -71,17 +77,25 @@
       <tbody>
         {% for loan in loan_data if loan.status == 'completed' %}
         <tr>
-          <td>{{ loan.Gender }}</td>
-          <td>{{ loan.Married }}</td>
+          <td>{{'Female' if loan.Gender == 1 else 'Male' }}</td>
+          <td>{{ 'No' if loan.Married == 1 else 'Yes'}}</td>
           <td>{{ loan.Dependents }}</td>
-          <td>{{ loan.Education }}</td>
-          <td>{{ loan.Self_Employed }}</td>
+          <td>{{ 'Not Graduate' if loan.Education== 1 else 'Graduate' }}</td>
+          <td>{{ 'No' if loan.Self_Employed == 1 else 'Yes' }}</td>
           <td>{{ loan.ApplicantIncome }}</td>
           <td>{{ loan.CoapplicantIncome }}</td>
           <td>{{ loan.LoanAmount }}</td>
           <td>{{ loan.Loan_Amount_Term }}</td>
           <td>{{ loan.Credit_History }}</td>
-          <td>{{ loan.Property_Area }}</td>
+          <td>
+            {% if loan.Property_Area == 0 %}
+            Rural
+            {% elif loan.Property_Area == 1 %}
+            Semi Rural
+            {% else %}
+            Urban
+            {% endif %}
+          </td>
           <td>{{ 'Diterima' if loan.loan_status == 1 else 'Ditolak' }}</td>
         </tr>
         {% endfor %}

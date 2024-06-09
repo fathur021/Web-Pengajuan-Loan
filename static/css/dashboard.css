@@ -172,3 +172,28 @@ tr:nth-child(even) {
 tr:hover {
   background-color: #f1f1f1;
 }
+    .label-danger {
+      color: white;
+      background-color: red;
+      padding: 3px;
+      border-radius: 3px;
+    }
+    .label-success {
+      color: white;
+      background-color: green;
+      padding: 3px;
+      border-radius: 3px;
+    }
+    .label-warning {
+      color: black;
+      background-color: yellow;
+      padding: 3px;
+      border-radius: 3px;
+    }
+    .italic {
+      font-style: italic;
+    }
+  
+    input::placeholder {
+      font-style: italic;
+    } 

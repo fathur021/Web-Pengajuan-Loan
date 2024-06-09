@@ -31,7 +31,7 @@ def admin_required(f):
             return redirect(url_for('login'))
         if session.get('role') != 1:
             flash("You do not have permission to access this page.", "error")
-            return redirect(url_for('index'))
+            return redirect(url_for('login.html'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -127,7 +127,7 @@ feature_names = ['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed'
 
 @app.route("/")
 def index():
-    return render_template("login.html")
+    return render_template("landing_page.html")
 
 # Cek database
 @app.route("/check_database")
@@ -145,6 +145,7 @@ def registrasi():
     if request.method == "POST":
         name = request.form['name']
         email = request.form['email']
+        phone = request.form['phone']
         password = request.form['password']
         repeat_password = request.form['repeat_password']
 
@@ -160,7 +161,7 @@ def registrasi():
         cur = mysql.connection.cursor()
 
         # Execute query
-        cur.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
+        cur.execute("INSERT INTO users (name, email, phone, password) VALUES (%s, %s, %s, %s)", (name, email, phone, hashed_password))
 
         # Commit to DB
         mysql.connection.commit()
@@ -264,7 +265,7 @@ def submit_user():
         except Exception as e:
             flash(f"Failed to submit data: {str(e)}", "error")
             logging.error(f"Failed to submit data: {str(e)}")
-            return redirect(url_for('index'))  # Redirect kembali ke halaman utama jika terjadi kesalahan
+            return redirect(url_for('login.html'))  # Redirect kembali ke halaman utama jika terjadi kesalahan
     else:
         return render_template("dashboard_user.html")  # Misalnya, template HTML untuk halaman dashboard pengguna
 
@@ -314,14 +315,15 @@ def loan_history():
                     'Loan_Amount_Term': row[9],
                     'Credit_History': row[10],
                     'Property_Area': row[11],
-                    'loan_status': row[12]
+                    'loan_status': row[12],
+                    
                     
                 })
 
             return render_template("loan_history.html", loan_data=loan_data_dicts)
         except Exception as e:
             flash(f"Gagal mengambil data pinjaman: {str(e)}", "error")
-            return redirect(url_for('index'))
+            return redirect(url_for('login.html'))
     else:
         flash("Anda harus login untuk melihat halaman ini!", "error")
         return redirect(url_for('login'))
@@ -417,6 +419,7 @@ def predict_loan_status():
 
         # Convert prediction to a JSON serializable format
         prediction_value = int(prediction[0])
+        logging.debug(f"Prediction value to be saved: {prediction_value}")
 
         # Save the prediction to the database
         try:
@@ -428,6 +431,7 @@ def predict_loan_status():
             SET loan_status = %s
             WHERE user_id = %s
             """
+            logging.debug(f"Executing query: {update_query} with values {prediction_value}, {data['user_id']}")
             cursor.execute(update_query, (prediction_value, data['user_id']))
 
             mysql.connection.commit()
@@ -457,6 +461,7 @@ def admin_complete_loan_page():
                du.Loan_Amount_Term, du.Credit_History, du.Property_Area, du.loan_status
         FROM data_user du
         JOIN users u ON du.user_id = u.id
+        WHERE du.loan_status = 1
         """
         cursor.execute(query)
         loan_data = cursor.fetchall()
@@ -480,7 +485,7 @@ def admin_complete_loan_page():
                 'Loan_Amount_Term': float(row[10]),
                 'Credit_History': 'Yes' if row[11] == '1' else 'No',
                 'Property_Area': row[12].capitalize(),
-                'loan_status': 'Approved' if row[13] == '1' else 'Rejected'
+                'loan_status': 'Diterima' if row[13] == '1' else 'Ditolak'
             }
             loan_data_dicts.append(loan_data_dict)
 
@@ -535,5 +540,54 @@ def complete_loan(user_id):
         return redirect(url_for('login'))
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+@app.route("/setting", methods=["GET", "POST"])
+@login_required
+def setting():
+    if request.method == "POST":
+        try:
+            name = request.form['name']
+            email = request.form['email']
+            phone = request.form['phone']
+            password = request.form['password']
+            new_password = request.form['new_password']
+            repeat_new_password = request.form['repeat_new_password']
+
+            # Create cursor
+            cur = mysql.connection.cursor()
+
+            # Check if the user wants to update the password
+            if new_password and new_password == repeat_new_password:
+                hashed_new_password = generate_password_hash(new_password)
+                cur.execute("UPDATE users SET name=%s, email=%s, phone=%s, password=%s WHERE id=%s",
+                            (name, email, phone, hashed_new_password, session['user_id']))
+            else:
+                # If no new password, just update other fields
+                cur.execute("UPDATE users SET name=%s, email=%s, phone=%s WHERE id=%s",
+                            (name, email, phone, session['user_id']))
+
+            # Commit to DB
+            mysql.connection.commit()
+
+            # Close connection
+            cur.close()
+
+            flash("Settings updated successfully!", "success")
+            return redirect(url_for('setting'))
+        except Exception as e:
+            flash(f"Failed to update settings: {str(e)}", "error")
+            return redirect(url_for('setting'))
+    else:
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute("SELECT name, email, phone FROM users WHERE id = %s", [session['user_id']])
+            user_data = cursor.fetchone()
+            cursor.close()
+
+            return render_template("setting.html", user_data=user_data)
+        except Exception as e:
+            flash(f"Failed to load user data: {str(e)}", "error")
+            return redirect(url_for('login.html'))
+        
+
+if __name__ == '__main__':
+    app.run(host="0.0.0.0")
