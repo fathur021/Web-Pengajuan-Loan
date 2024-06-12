@@ -12,3 +12,9 @@ Target Pengguna
 Aplikasi ini ditujukan untuk individu yang membutuhkan akses cepat dan mudah ke pinjaman, termasuk pekerja lepas, wiraswasta 
 Refleksi Hasil Belajar
 Kami belajar tentang pentingnya data dan analisis dalam memberikan solusi efektif, serta bagaimana teknologi dapat menyederhanakan proses kompleks dan meningkatkan aksesibilitas. Kami juga menyadari pentingnya mendengarkan kebutuhan pengguna dan beradaptasi dengan cepat terhadap umpan balik.
+
+### Sandi Admin
+1. **Email**
+   ```bash
+  admin@lendfriend.co.id 	
+   ```
