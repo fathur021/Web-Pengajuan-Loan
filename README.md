@@ -13,8 +13,10 @@ Aplikasi ini ditujukan untuk individu yang membutuhkan akses cepat dan mudah ke 
 Refleksi Hasil Belajar
 Kami belajar tentang pentingnya data dan analisis dalam memberikan solusi efektif, serta bagaimana teknologi dapat menyederhanakan proses kompleks dan meningkatkan aksesibilitas. Kami juga menyadari pentingnya mendengarkan kebutuhan pengguna dan beradaptasi dengan cepat terhadap umpan balik.
 
-### Sandi Admin
-1. **Clone Repository**
-   ```bash
-   git clone https://github.com/fathur021/Task-Manager.git
-   ```
+## Contact Information
+
+If you need assistance or have any inquiries, please reach out to our admin:
+
+- **Email**: [admin@lendfriend.co.id](mailto:admin@lendfriend.co.id)
+- **Password**: `123456`
+
