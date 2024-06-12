@@ -14,7 +14,7 @@ Refleksi Hasil Belajar
 Kami belajar tentang pentingnya data dan analisis dalam memberikan solusi efektif, serta bagaimana teknologi dapat menyederhanakan proses kompleks dan meningkatkan aksesibilitas. Kami juga menyadari pentingnya mendengarkan kebutuhan pengguna dan beradaptasi dengan cepat terhadap umpan balik.
 
 ### Sandi Admin
-1. **Email**
+1. **Clone Repository**
    ```bash
-  admin@lendfriend.co.id 	
+   git clone https://github.com/fathur021/Task-Manager.git
    ```
